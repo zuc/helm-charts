@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  outline:
+  - apiVersion: v2
+    appVersion: version-0.43.3
+    created: "2020-06-23T10:28:49.756972683Z"
+    description: A Helm chart for https://github.com/outline/outline
+    digest: 8aa8e367f36fc1ed23b174f954b3a8e8310d8bf0dbbfa377f09b661588a844a9
+    name: outline
+    type: application
+    urls:
+    - https://github.com/zuc/helm-charts/releases/download/outline-0.1.0/outline-0.1.0.tgz
+    version: 0.1.0
+generated: "2020-06-23T10:28:49.56980665Z"
