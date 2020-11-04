@@ -3,4 +3,4 @@ name: outline
 description: A Helm chart for https://github.com/outline/outline
 type: application
 version: 0.1.0
-appVersion: version-0.43.3
+appVersion: version-0.49.0
