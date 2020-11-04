@@ -61,3 +61,25 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Set postgresql URL
+*/}}
+{{- define "outline.postgresqlUrl" -}}
+{{- if .Values.postgresql.enabled -}}
+{{- printf "postgres://outline:%s@%s-postgresql:%d/outline" .Values.postgresql.password (include "outline.fullname" .) (int .Values.postgresql.port) -}}
+{{- else -}}
+{{- .Values.postgresqlUrl | required "A value must be entered for postgresqlUrl" | quote -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Set redis URL
+*/}}
+{{- define "outline.redisUrl" -}}
+{{- if .Values.redis.enabled -}}
+{{- printf "redis://%s-redis:%d" (include "outline.fullname" .) (int .Values.redis.port) -}}
+{{- else -}}
+{{- .Values.redisUrl | required "A value must be entered for redisUrl" | quote -}}
+{{- end -}}
+{{- end -}}

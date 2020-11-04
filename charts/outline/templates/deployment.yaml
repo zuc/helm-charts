@@ -13,10 +13,11 @@ spec:
       {{- include "outline.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-    {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        {{- range $key, $value := .Values.podAnnotations }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
       labels:
         {{- include "outline.selectorLabels" . | nindent 8 }}
     spec:
@@ -33,18 +34,73 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              value: {{ .Values.outline.aws.accessKey | default "" | quote }}
+            - name: AWS_REGION
+              value: {{ .Values.outline.aws.s3.region | default "" | quote }}
+            - name: AWS_S3_ACL
+              value: {{ .Values.outline.aws.s3.acl | default "" | quote }}
+            - name: AWS_S3_UPLOAD_BUCKET_NAME
+              value: {{ .Values.outline.aws.s3.bucket | default "" | quote }}
+            - name: AWS_S3_UPLOAD_BUCKET_URL
+              value: {{ .Values.outline.aws.s3.endpoint | default "" | quote }}
+            - name: AWS_S3_UPLOAD_MAX_SIZE
+              value: {{ .Values.outline.aws.s3.maxSize | default "" | quote }}
+            - name: DEBUG
+              value: {{ .Values.outline.debug | default "" | quote }}
+            - name: ENABLE_UPDATES
+              value: {{ .Values.outline.enableUpdates | default "true" | quote }}
+            - name: FORCE_HTTPS
+              value: {{ .Values.outline.forceHttps | default "true" | quote }}
+            - name: GOOGLE_ALLOWED_DOMAINS
+              value: {{ .Values.outline.auth.google.allowedDomains | join "," | quote }}
+            - name: GOOGLE_ANALYTICS_ID
+              value: {{ .Values.outline.googleAnalyticsId | default "" | quote }}
+            - name: GOOGLE_CLIENT_ID
+              value: {{ .Values.outline.auth.google.clientId | default "" | quote }}
+            - name: PORT
+              value: {{ .Values.outline.containerPort | default 3000 | quote }}
+            - name: SLACK_APP_ID
+              value: {{ .Values.outline.notifications.slack.appId | default "" | quote }}
+            - name: SLACK_KEY
+              value: {{ .Values.outline.auth.slack.key | default "" | quote }}
+            - name: SLACK_MESSAGE_ACTIONS
+              value: {{ .Values.outline.notifications.slack.messageActions | default "true" | quote }}
+            - name: SMTP_FROM_EMAIL
+              value: {{ .Values.outline.smtp.fromEmail | default "" | quote }}
+            - name: SMTP_HOST
+              value: {{ .Values.outline.smtp.host | default "" | quote }}
+            - name: SMTP_PORT
+              value: {{ .Values.outline.smtp.port | default "" | quote }}
+            - name: SMTP_REPLY_EMAIL
+              value: {{ .Values.outline.smtp.replyEmail | default "" | quote }}
+            - name: SMTP_USERNAME
+              value: {{ .Values.outline.smtp.user | default "" | quote }}
+            - name: TEAM_LOGO
+              value: {{ .Values.outline.teamLogo | default "" | quote }}
+            - name: URL
+              value: {{ .Values.outline.externalUrl | required "Please set this release's external URL" | quote }}
+            - name: WEBSOCKETS_ENABLED
+              value: {{ .Values.outline.websocketsEnabled | default "true" | quote }}
+          envFrom:
+            - secretRef:
+                name: {{ include "outline.fullname" . }}
           ports:
             - name: http
-              containerPort: 80
+              containerPort: {{ .Values.outline.containerPort | default 3000 }}
               protocol: TCP
           livenessProbe:
             httpGet:
               path: /
               port: http
+            initialDelaySeconds: 90
+            periodSeconds: 5
           readinessProbe:
             httpGet:
               path: /
               port: http
+            periodSeconds: 5
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
