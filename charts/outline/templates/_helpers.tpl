@@ -78,7 +78,7 @@ Set redis URL
 */}}
 {{- define "outline.redisUrl" -}}
 {{- if .Values.redis.enabled -}}
-{{- printf "redis://%s-redis:%d" (include "outline.fullname" .) (int .Values.redis.port) -}}
+{{- printf "redis://%s-redis-master:%d" (include "outline.fullname" .) (int .Values.redis.port) -}}
 {{- else -}}
 {{- .Values.redisUrl | required "A value must be entered for redisUrl" | quote -}}
 {{- end -}}

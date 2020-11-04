@@ -66,6 +66,7 @@ redis:
   enabled: true
   imageTag: latest
   port: 6379
+  usePassword: false
 
 serviceAccount:
   create: true
