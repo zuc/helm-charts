@@ -28,6 +28,26 @@ spec:
       serviceAccountName: {{ include "outline.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: {{ .Chart.Name }}-init
+          command:
+            - yarn
+            - sequelize:migrate
+            - --env=production-ssl-disabled
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: DEBUG
+              value: {{ .Values.outline.debug | default "" | quote }}
+            - name: PGSSLMODE
+              value: {{ .Values.outline.postgresqlSslMode | default "enable" | quote }}
+          envFrom:
+            - secretRef:
+                name: {{ include "outline.fullname" . }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -41,12 +61,18 @@ spec:
               value: {{ .Values.outline.aws.s3.region | default "" | quote }}
             - name: AWS_S3_ACL
               value: {{ .Values.outline.aws.s3.acl | default "" | quote }}
+            - name: AWS_S3_FORCE_PATH_STYLE
+              value: {{ .Values.outline.aws.s3.forcePathStyle | default "false" | quote }}
             - name: AWS_S3_UPLOAD_BUCKET_NAME
               value: {{ .Values.outline.aws.s3.bucket | default "" | quote }}
             - name: AWS_S3_UPLOAD_BUCKET_URL
               value: {{ .Values.outline.aws.s3.endpoint | default "" | quote }}
             - name: AWS_S3_UPLOAD_MAX_SIZE
               value: {{ .Values.outline.aws.s3.maxSize | default "" | quote }}
+            - name: AZURE_CLIENT_ID
+              value: {{ .Values.outline.auth.azure.clientId | default "" | quote }}
+            - name: AZURE_RESOURCE_APP_ID
+              value: {{ .Values.outline.auth.azure.resourceAppId | default "" | quote }}
             - name: DEBUG
               value: {{ .Values.outline.debug | default "" | quote }}
             - name: ENABLE_UPDATES
@@ -59,6 +85,8 @@ spec:
               value: {{ .Values.outline.googleAnalyticsId | default "" | quote }}
             - name: GOOGLE_CLIENT_ID
               value: {{ .Values.outline.auth.google.clientId | default "" | quote }}
+            - name: PGSSLMODE
+              value: {{ .Values.outline.postgresqlSslMode | default "enable" | quote }}
             - name: PORT
               value: {{ .Values.outline.containerPort | default 3000 | quote }}
             - name: SLACK_APP_ID

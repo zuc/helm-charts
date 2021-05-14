@@ -69,7 +69,7 @@ Set postgresql URL
 {{- if .Values.postgresql.enabled -}}
 {{- printf "postgres://outline:%s@%s-postgresql:%d/outline" .Values.postgresql.password (include "outline.fullname" .) (int .Values.postgresql.port) -}}
 {{- else -}}
-{{- .Values.postgresqlUrl | required "A value must be entered for postgresqlUrl" | quote -}}
+{{- .Values.outline.postgresqlUrl | required "A value must be entered for postgresqlUrl" -}}
 {{- end -}}
 {{- end -}}
 
