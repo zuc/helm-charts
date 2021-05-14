@@ -37,7 +37,7 @@ outline:
   containerPort: 3000
   debug: "cache,presenters,events,emails,logistics,mailer,utils,multiplayer,server,services"
   enableUpdates: true
-  externalUrl: "https://foobar.com/outline"
+  externalUrl: "https://foobar.com"
   forceHttps: "false"
   googleAnalyticsId: ""
   notifications:
