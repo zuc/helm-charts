@@ -11,6 +11,10 @@ fullnameOverride: ""
 
 outline:
   auth:
+    azure:
+      clientId: ""
+      clientSecret: ""
+      resourceAppId: ""
     google:
       allowedDomains:
         - example.com
@@ -27,13 +31,14 @@ outline:
       acl: private    # Set to public-read to allow public access
       bucket: ""
       endpoint: ""
+      forcePathStyle: "false"
       maxSize: 26214400
       region: ""
   containerPort: 3000
-  debug: "sql,cache,presenters,events,logistics,emails,mailer"
+  debug: "cache,presenters,events,emails,logistics,mailer,utils,multiplayer,server,services"
   enableUpdates: true
   externalUrl: "https://foobar.com/outline"
-  forceHttps: true
+  forceHttps: "false"
   googleAnalyticsId: ""
   notifications:
     slack:
@@ -41,6 +46,7 @@ outline:
       messageActions: true
       verificationToken: ""
   postgresqlUrl: ""   # This is mandatory only if embedded postgresql is disabled
+  postgresqlSslMode: enable
   redisUrl: ""        # This is mandatory only if embedded redis is disabled
   secrets:
     key: foobar
